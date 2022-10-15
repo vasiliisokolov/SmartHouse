@@ -1,6 +1,16 @@
 ﻿#include <iostream>
 #include <string>
 
+enum switches
+{
+    ALL_POWER = 1,
+    POWER_INSIDE = 2,
+    LIGHTS_INSIDE = 4,
+    LIGHTS_OUTSIDE = 8,
+    HEATERS = 16,
+    WATER_PIPE_HEATING = 32,
+    CONDITIONER = 64
+};
 std::string show_clock(int, int);
 
 int main()
@@ -11,16 +21,7 @@ int main()
     int switches_state = 0;
     int hours = 0;
     int minutes = 0;
-    enum switches
-    {
-        ALL_POWER = 1,
-        POWER_INSIDE = 2,
-        LIGHTS_INSIDE = 4,
-        LIGHTS_OUTSIDE = 8,
-        HEATERS = 16,
-        WATER_PIPE_HEATING = 32,
-        CONDITIONER = 64
-    };
+        
     std::string time = show_clock(hours, minutes);
     std::cout << time;
     /*int switches_state = ALL_POWER
@@ -44,7 +45,6 @@ int main()
     if (time[0] >= '1' && time[1] >= '6' && time[3] >= 0 && time[3] >= 0 && MOTION_SENSOR_OUTSIDE)
     {
         switches_state |= LIGHTS_OUTSIDE;
-
     }
     std::cout << switches_state;
 }
