@@ -34,13 +34,16 @@ int main()
     {
         for (; hours < 24; ++hours)
         {
-            std::stringstream temp_stream(buffer);
+            
             std::cout << show_clock(hours, minutes) << std::endl;
             std::cout << "Enter sensor readings: \n";
             std::cout << "Outside t, inside t, motion sensor(yes/no), lights inside (on/off) : \n";
             std::cin >> buffer;
+            std::stringstream temp_stream(buffer);
             temp_stream >> TEMP_SENSOR_OUTSIDE >> TEMP_SENSOR_INSIDE >> mo >> li;
-            
+            std::cout << TEMP_SENSOR_OUTSIDE << std::endl;
+            std::cout << TEMP_SENSOR_INSIDE << std::endl;
+            std::cout << mo << std::endl;
             if (mo == "yes")
                 MOTION_SENSOR_OUTSIDE = true;
             else
