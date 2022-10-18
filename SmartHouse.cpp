@@ -15,6 +15,7 @@ enum switches
 
 std::string show_clock(int, int);
 void check_situation(std:: string, int, int&, int, int, bool,int);
+bool check_input(int, int, std::string, std::string);
 
 int main()
 {
@@ -33,23 +34,27 @@ int main()
     for (; days < 2; days++)
     {
         for (; hours < 24; ++hours)
-        {
-            
+        {                    
             std::cout << show_clock(hours, minutes) << std::endl;
             std::cout << "Enter sensor readings: \n";
             std::cout << "Outside t, inside t, motion sensor(yes/no), lights inside (on/off) : \n";
-            std::cin >> buffer;
-            std::stringstream temp_stream(buffer);
+            std::getline(std::cin, buffer);
+            std::stringstream temp_stream (buffer);
             temp_stream >> TEMP_SENSOR_OUTSIDE >> TEMP_SENSOR_INSIDE >> mo >> li;
-            std::cout << TEMP_SENSOR_OUTSIDE << std::endl;
-            std::cout << TEMP_SENSOR_INSIDE << std::endl;
-            std::cout << mo << std::endl;
-            if (mo == "yes")
-                MOTION_SENSOR_OUTSIDE = true;
+            if (check_input(TEMP_SENSOR_OUTSIDE, TEMP_SENSOR_INSIDE, mo, li))
+            {
+                if (mo == "yes")
+                    MOTION_SENSOR_OUTSIDE = true;
+                else
+                    MOTION_SENSOR_OUTSIDE = false;
+                check_situation(li, hours, switches_state, TEMP_SENSOR_INSIDE,
+                    TEMP_SENSOR_OUTSIDE, MOTION_SENSOR_OUTSIDE, colorfulTemperature);
+            }
             else
-                MOTION_SENSOR_OUTSIDE = false;
-            check_situation(li, hours, switches_state, TEMP_SENSOR_INSIDE,
-                TEMP_SENSOR_OUTSIDE, MOTION_SENSOR_OUTSIDE, colorfulTemperature);
+            {
+                std::cerr << "Wrong data input!" << std::endl;
+                hours--;
+            }
         }
     }
    
@@ -142,11 +147,11 @@ void check_situation(std::string li, int hours,
         std::cout << "Conditioner Off" << std::endl;
     }
     
-    if (hours >= 16 || hours <= 20 && (switches_state & LIGHTS_INSIDE))
+    if (hours >= 16 && hours <= 20 && (switches_state & LIGHTS_INSIDE))
     {
         for (; colorfulTemperature > 2700; colorfulTemperature -= 100)
         {
-            std::cout << " Colorful Temperature: " << colorfulTemperature << std::endl;;
+            std::cout << "Colorful Temperature: " << colorfulTemperature << std::endl;;
         }
     }
     else if (hours == 0)
@@ -154,4 +159,21 @@ void check_situation(std::string li, int hours,
         colorfulTemperature = 5000;
     }
 
+}
+
+bool check_input(int TEMP_SENSOR_OUTSIDE, int TEMP_SENSOR_INSIDE, std::string mo, std::string li)
+{
+    int check = 0;
+    if (TEMP_SENSOR_OUTSIDE >= -20 && TEMP_SENSOR_OUTSIDE <= 60)
+        check++;
+    if (TEMP_SENSOR_INSIDE >= -10 && TEMP_SENSOR_INSIDE <= 40)
+        check++;
+    if (mo == "yes" || mo == "no")
+        check++;
+    if (li == "on" || li == "off")
+        check++;
+    if (check == 4)
+        return true;
+    else
+        return false;
 }
